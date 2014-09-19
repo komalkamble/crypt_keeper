@@ -26,9 +26,14 @@ module CryptKeeper
 
     # Private: Force string encodings if the option is set
     def force_encodings_on_fields
-      crypt_keeper_fields.each do |field|
-        send(field).force_encoding(crypt_keeper_encoding) if send(field).respond_to?(:force_encoding)
-      end
+      begin
+        logger = Logger.new(STDOUT)
+        logger.debug "=====================#{crypt_keeper_fields}"
+        crypt_keeper_fields.each do |field|
+          send(field).force_encoding(crypt_keeper_encoding) if send(field).respond_to?(:force_encoding)
+        end
+      rescue ActiveRecord::MissingAttributeError 
+      end  
     end
 
     module ClassMethods
